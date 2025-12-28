@@ -18,48 +18,48 @@ class Program
         while (!exitProgram)
         {
             Console.Clear();
-            Console.WriteLine("=== Bild-Duplikat-Finder ===");
-            string? imageFolder = SelectFolder("Bitte den Bilderordner auswählen");
+            Console.WriteLine("=== Media Duplicate Finder ===");
+            string? imageFolder = SelectFolder("Choose a folder to scan:");
             if (string.IsNullOrEmpty(imageFolder))
             {
-                Console.WriteLine("Kein Ordner ausgewählt.");
+                Console.WriteLine("No folder selected. Exiting.");
                 goto Menu;
             }
 
             string duplicateFolder = Path.Combine(imageFolder, "duplicates");
 
             var files = GetImageFiles(imageFolder, duplicateFolder);
-            Console.WriteLine($"Gefunden: {files.Count} Bilder. Starte Analyse...");
+            Console.WriteLine($"Found: {files.Count} pictures. Starting Scan...");
 
             var fileHashes = ComputeHashes(files);
             var (unique, duplicates) = FindDuplicates(fileHashes, maxDistance: 3);
 
-            Console.WriteLine($"Analyse beendet. {unique.Count} eindeutige Bilder, {duplicates.Count} Duplikate gefunden.");
+            Console.WriteLine($"Scan completed. {unique.Count} unique pictures, {duplicates.Count} duplicates found.");
 
             if (duplicates.Count > 0)
             {
                 Directory.CreateDirectory(duplicateFolder);
                 MoveDuplicates(duplicates, duplicateFolder);
-                Console.WriteLine($"{duplicates.Count} Duplikate nach '{duplicateFolder}' verschoben.");
+                Console.WriteLine($"{duplicates.Count} Move duplicates to '{duplicateFolder}'.");
 
-                Console.WriteLine("\nScan abgeschlossen.");
-                Console.Write("Soll der Duplikat-Ordner geöffnet werden? (j/n): ");
+                Console.WriteLine("\nScan complete.");
+                Console.Write("Open duplicates folder? (y/n): ");
                 string? response = Console.ReadLine();
-                if (response?.Trim().ToLower() == "j")
+                if (response?.Trim().ToLower() == "y")
                 {
                     OpenFolder(duplicateFolder);
                 }
             }
             else
             {
-                Console.WriteLine("\nKeine Duplikate gefunden. Scan abgeschlossen.");
+                Console.WriteLine("\nNo duplicates found. Scan completed.");
             }
 
             Menu:
-            Console.WriteLine("\nWie möchten Sie fortfahren?");
-            Console.WriteLine("1. Neuer Scan");
-            Console.WriteLine("2. Programm beenden");
-            Console.Write("Auswahl: ");
+            Console.WriteLine("\nWhat you want to do?");
+            Console.WriteLine("1. New Scan");
+            Console.WriteLine("2. Exit");
+            Console.Write("Choose: ");
 
             string? choice = Console.ReadLine();
             if (choice == "2")
@@ -68,8 +68,7 @@ class Program
             }
             else if (choice != "1")
             {
-                // Bei ungültiger Eingabe standardmäßig beenden oder erneut fragen?
-                // Der Nutzer fragte explizit nach 1 und 2.
+                // Exit by default if input is invalid
                 exitProgram = true;
             }
         }
@@ -99,14 +98,14 @@ class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nFehler bei {Path.GetFileName(file)}: {ex.Message}");
+                Console.WriteLine($"\nError at {Path.GetFileName(file)}: {ex.Message}");
             }
             finally
             {
                 int current = Interlocked.Increment(ref processed);
                 if (current % 10 == 0 || current == total)
                 {
-                    Console.Write($"\rFortschritt: {current}/{total} Bilder verarbeitet...");
+                    Console.Write($"\rProgress: {current}/{total} pictures processed...");
                 }
             }
         });
@@ -129,7 +128,7 @@ class Program
                 {
                     isDuplicate = true;
                     duplicates.Add(item.File);
-                    Console.WriteLine($"Duplikat: {Path.GetFileName(item.File)} ≈ {Path.GetFileName(entry.File)}");
+                    Console.WriteLine($"Duplicate: {Path.GetFileName(item.File)} ≈ {Path.GetFileName(entry.File)}");
                     break;
                 }
             }
@@ -158,7 +157,7 @@ class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Fehler beim Verschieben von {file}: {ex.Message}");
+                Console.WriteLine($"ERROR: Can't move {file}: {ex.Message}");
             }
         }
     }
@@ -178,12 +177,10 @@ class Program
 
     static string? SelectFolder(string description)
     {
-        Console.WriteLine("Öffne Ordnerauswahl-Dialog...");
+        Console.WriteLine("Opening Folder Dialog...");
 
         string? selectedPath = null;
-
-        // Wir erstellen einen unsichtbaren Wrapper-Thread für den Dialog, 
-        // um sicherzustellen, dass er im STA-Modus läuft und einen Besitzer hat.
+        
         var thread = new Thread(() =>
         {
             using var dialog = new FolderBrowserDialog
@@ -192,8 +189,7 @@ class Program
                 UseDescriptionForTitle = true,
                 ShowNewFolderButton = false
             };
-
-            // Ein unsichtbares Formular erstellen, um den Dialog in den Vordergrund zu zwingen
+            
             using var dummyForm = new Form
             {
                 TopMost = true,
@@ -201,8 +197,7 @@ class Program
                 ShowInTaskbar = false,
                 WindowState = FormWindowState.Normal
             };
-
-            // Das Handle der Konsole als Besitzer verwenden
+            
             IntPtr consoleHandle = GetConsoleWindow();
             if (consoleHandle != IntPtr.Zero)
             {
@@ -211,7 +206,6 @@ class Program
 
             IWin32Window? owner = consoleHandle != IntPtr.Zero ? new WindowWrapper(consoleHandle) : dummyForm;
             
-            // Dummy Form handle erzwingen und in den Vordergrund bringen
             _ = dummyForm.Handle;
             SetForegroundWindow(dummyForm.Handle);
 
