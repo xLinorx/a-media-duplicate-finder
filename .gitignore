@@ -21,3 +21,6 @@ obj/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local release builds
+Release_Build/
