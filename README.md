@@ -1,14 +1,14 @@
-﻿# Media Duplicate Finder
+# Media Duplicate Finder
 
 A simple and efficient Windows Forms application to find and manage duplicate images using perceptual hashing.
 
 ## Features
 
-- **Perceptual Hashing:** Uses advanced algorithms (via CoenM.ImageHash) to find images that look similar, not just byte-for-byte identical.
-- **Fast Scanning:** Leverages multi-core processors for quick hash calculation.
-- **Customizable Extensions:** Choose which file types to scan (e.g., .jpg, .png, .bmp, .webp, .tiff).
-- **Easy Management:** Automatically moves duplicates to a dedicated subfolder, keeping your original collection clean.
-- **User-Friendly UI:** Real-time progress tracking and detailed logging.
+* **Perceptual Hashing:** Uses advanced algorithms (via CoenM.ImageHash) to find images that look similar, not just byte-for-byte identical.
+* **Fast Scanning:** Leverages multi-core processors for quick hash calculation.
+* **Customizable Extensions:** Choose which file types to scan (e.g., .jpg, .png, .bmp, .webp, .tiff).
+* **Easy Management:** Automatically moves duplicates to a dedicated subfolder, keeping your original collection clean.
+* **User-Friendly UI:** Real-time progress tracking and detailed logging.
 
 ## How to Use
 
@@ -21,10 +21,10 @@ A simple and efficient Windows Forms application to find and manage duplicate im
 
 ## Technical Details
 
-- Built with **.NET 8.0**.
-- Uses **SixLabors.ImageSharp** for image processing.
-- Uses **CoenM.ImageSharp.ImageHash** for perceptual hashing.
+* Built with **.NET 8.0**.
+* Uses **SixLabors.ImageSharp** for image processing.
+* Uses **CoenM.ImageSharp.ImageHash** for perceptual hashing.
 
 ## Installation
 
-Download the latest release from the [Releases](https://github.com/YOUR_USERNAME/YOUR_REPO/releases) page. No installation required - just run the executable.
+Download the latest release from the [Releases](https://github.com/xLinorx/a-media-duplicate-finder/releases) page. No installation required - just run the executable.
